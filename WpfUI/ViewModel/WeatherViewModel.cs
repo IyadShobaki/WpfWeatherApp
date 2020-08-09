@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WpfUI.Model;
+using WpfUI.ViewModel.Commands;
+using WpfUI.ViewModel.Helpers;
 
 namespace WpfUI.ViewModel
 {
@@ -46,6 +48,8 @@ namespace WpfUI.ViewModel
             }
         }
 
+        public SearchCommand SearchCommand { get; set; }
+
         // For testing during the designing mode
         public WeatherViewModel()
         {
@@ -68,6 +72,13 @@ namespace WpfUI.ViewModel
                 };
 
             }
+
+            SearchCommand = new SearchCommand(this);
+        }
+
+        public async void MakeQuery()
+        {
+            var cities = await AccuWeatherHelper.GetCities(Query);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

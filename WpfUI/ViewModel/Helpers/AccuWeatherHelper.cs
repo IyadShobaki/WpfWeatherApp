@@ -18,6 +18,7 @@ namespace WpfUI.ViewModel.Helpers
         public const string CURRENT_CONDITIONS_ENDPOINT = "**************************";
         public const string API_KEY = "***************************";
 
+
         public static async Task<List<City>> GetCities(string query)
         {
             List<City> cities = new List<City>();
