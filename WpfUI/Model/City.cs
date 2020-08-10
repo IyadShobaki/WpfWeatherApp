@@ -21,5 +21,13 @@ namespace WpfUI.Model
         public string LocalizedName { get; set; }
         public Area Country { get; set; }
         public Area AdministrativeArea { get; set; }
+
+        public string FullName
+        {
+            get
+            {
+                return LocalizedName + ", " + AdministrativeArea.LocalizedName + ", " + Country.LocalizedName;
+            }
+        }
     }
 }

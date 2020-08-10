@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,8 @@ namespace WpfUI.ViewModel
             }
         }
 
+        public ObservableCollection<City> Cities  { get; set; }
+
         private CurrentConditions _currentConditions;
 
         public CurrentConditions CurrentConditions
@@ -44,7 +47,11 @@ namespace WpfUI.ViewModel
             set
             {
                 _selectedCity = value;
-                OnPropertyChanged("SelectedCity");
+                if (_selectedCity != null)
+                {
+                    OnPropertyChanged("SelectedCity");
+                    GetCurrentConditions();
+                }
             }
         }
 
@@ -53,32 +60,48 @@ namespace WpfUI.ViewModel
         // For testing during the designing mode
         public WeatherViewModel()
         {
-            if (DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
-            {
-                SelectedCity = new City
-                {
-                    LocalizedName = "New York"
-                };
-                CurrentConditions = new CurrentConditions
-                {
-                    WeatherText = "Patly cloudy",
-                    Temperature = new Temperature
-                    {
-                        Metric = new Units
-                        {
-                            Value = 21
-                        }
-                    }
-                };
+            //if (DesignerProperties.GetIsInDesignMode(new System.Windows.DependencyObject()))
+            //{
+            //    SelectedCity = new City
+            //    {
+            //        LocalizedName = "New York"
+            //    };
+            //    CurrentConditions = new CurrentConditions
+            //    {
+            //        WeatherText = "Patly cloudy",
+            //        Temperature = new Temperature
+            //        {
+            //            Metric = new Units
+            //            {
+            //                Value = "21"
+            //            }
+            //        }
+            //    };
 
-            }
+            //}
 
             SearchCommand = new SearchCommand(this);
+            Cities = new ObservableCollection<City>();
+        }
+
+        private async void GetCurrentConditions()
+        {
+            Query = string.Empty;
+            CurrentConditions = await AccuWeatherHelper.GetCurrentConditions(SelectedCity.Key);
+            Cities.Clear();
+
         }
 
         public async void MakeQuery()
         {
             var cities = await AccuWeatherHelper.GetCities(Query);
+
+            Cities.Clear();
+
+            foreach (var city in cities)
+            {
+                Cities.Add(city);
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
